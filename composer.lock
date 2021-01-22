@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d42e820083798b0902bfa22967f9ad8",
+    "content-hash": "af409a1bb73a88f849528a38acda2601",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3204,16 +3204,16 @@
         },
         {
             "name": "edamov/pushok",
-            "version": "0.11.4",
+            "version": "0.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edamov/pushok.git",
-                "reference": "34e7f3c6bc91f317a0191e0450a885d4f86a9886"
+                "reference": "9078598d9b57ee9fcde4d139b987a3b9670a33b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edamov/pushok/zipball/34e7f3c6bc91f317a0191e0450a885d4f86a9886",
-                "reference": "34e7f3c6bc91f317a0191e0450a885d4f86a9886",
+                "url": "https://api.github.com/repos/edamov/pushok/zipball/9078598d9b57ee9fcde4d139b987a3b9670a33b8",
+                "reference": "9078598d9b57ee9fcde4d139b987a3b9670a33b8",
                 "shasum": ""
             },
             "require": {
@@ -3224,7 +3224,7 @@
                 "ext-xml": "*",
                 "lib-curl": ">=7.46.0",
                 "lib-openssl": ">=1.0.2.5",
-                "php": "^7.2",
+                "php": "^7.2|^8.0",
                 "web-token/jwt-key-mgmt": "^2.0",
                 "web-token/jwt-signature-algorithm-ecdsa": "^2.0"
             },
@@ -3267,9 +3267,9 @@
             ],
             "support": {
                 "issues": "https://github.com/edamov/pushok/issues",
-                "source": "https://github.com/edamov/pushok/tree/0.11.4"
+                "source": "https://github.com/edamov/pushok/tree/0.12.1"
             },
-            "time": "2020-10-28T13:40:30+00:00"
+            "time": "2021-01-19T16:52:36+00:00"
         },
         {
             "name": "egulias/email-validator",
