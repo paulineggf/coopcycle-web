@@ -220,7 +220,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     /**
      * @Assert\Valid()
-     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_rule_evalute"})
+     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_rule_evalute", "product_variant"})
      */
     private $address;
 
@@ -375,7 +375,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     /**
      * @SerializedName("after")
-     * @Groups({"task", "task_edit", "delivery"})
+     * @Groups({"task", "task_edit", "delivery", "product_variant"})
      */
     public function getAfter()
     {
@@ -395,7 +395,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     /**
      * @SerializedName("before")
-     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "product_variant"})
      */
     public function getBefore()
     {

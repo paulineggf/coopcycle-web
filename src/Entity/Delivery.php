@@ -100,6 +100,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $order;
 
+    /**
+     * @Groups({"product_variant"})
+     */
     private $weight;
 
     private $vehicle = self::VEHICLE_BIKE;
@@ -109,6 +112,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      */
     private $store;
 
+    /**
+     * @Groups({"product_variant"})
+     */
     private $packages;
 
     const SWAGGER_CONTEXT_POST_PARAMETERS = [
@@ -203,7 +209,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     /**
      * @return Task|null
-     * @Groups({"delivery"})
+     * @Groups({"delivery", "product_variant"})
      */
     public function getPickup()
     {
@@ -218,7 +224,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     /**
      * @return Task|null
-     * @Groups({"delivery"})
+     * @Groups({"delivery", "product_variant"})
      */
     public function getDropoff()
     {
