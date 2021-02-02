@@ -3,7 +3,7 @@ import Fuse from 'fuse.js'
 import Holidays from 'date-holidays'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectTaskLists as selectTaskListsBase, selectUnassignedTasks, selectAllTasks, selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, orderBy, forEach, find, reduce, map, differenceWith, includes } from 'lodash'
 import { isTaskVisible, isOffline } from './utils'
 

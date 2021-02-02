@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
-import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
+import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -9,7 +9,7 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-} from '../../coopcycle-frontend-js/dispatch/redux'
+} from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay } from './selectors'
 
 function createClient(dispatch) {
@@ -186,7 +186,7 @@ function removeTasks(username, tasks) {
   }
 }
 
-function updateTask(task) {
+function _updateTask(task) {
   return {type: UPDATE_TASK, task}
 }
 
@@ -456,6 +456,16 @@ function openImportModal() {
 
 function closeImportModal() {
   return { type: CLOSE_IMPORT_MODAL }
+}
+
+function updateTask(task) {
+  return function(dispatch, getState) {
+    let date = selectSelectedDate(getState())
+
+    if (isInDateRange(task, date)) {
+      dispatch(_updateTask(task))
+    }
+  }
 }
 
 function createTask(task) {
