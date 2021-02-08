@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
-import { taskComparator, withoutTasks, withLinkedTasks } from './utils'
+import { rrulestr } from 'rrule'
+import { taskComparator, withoutTasks, withLinkedTasks, recurrenceTemplateToArray } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -138,6 +139,10 @@ export const OPEN_IMPORT_MODAL = 'OPEN_IMPORT_MODAL'
 export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 
 export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
+
+export const OPEN_RECURRENCE_RULE_MODAL = 'OPEN_RECURRENCE_RULE_MODAL'
+export const CLOSE_RECURRENCE_RULE_MODAL = 'CLOSE_RECURRENCE_RULE_MODAL'
+export const SET_CURRENT_RECURRENCE_RULE = 'SET_CURRENT_RECURRENCE_RULE'
 
 function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -796,6 +801,82 @@ function moveTasksToNextWorkingDay(tasks) {
   }
 }
 
+function closeRecurrenceRuleModal() {
+  return { type: CLOSE_RECURRENCE_RULE_MODAL }
+}
+
+function setCurrentRecurrenceRule(recurrenceRule) {
+  return { type: SET_CURRENT_RECURRENCE_RULE, recurrenceRule }
+}
+
+function saveRecurrenceRule(recurrenceRule) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    // dispatch(createTaskRequest())
+
+    const url = Object.prototype.hasOwnProperty.call(recurrenceRule, '@id') ? recurrenceRule['@id'] : '/api/task_recurrence_rules'
+    const method = Object.prototype.hasOwnProperty.call(recurrenceRule, '@id') ? 'put' : 'post'
+
+    const payload = _.pick(recurrenceRule, [
+      'rule',
+      'template',
+    ])
+
+    console.log(payload)
+
+    createClient(dispatch).request({
+      method,
+      url,
+      data: payload,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        console.log(response.data)
+        // dispatch(createTaskSuccess())
+        // dispatch(updateTask(response.data))
+        // dispatch(closeNewTaskModal())
+      })
+      .catch(error => console.log(error))
+  }
+}
+
+function createTasksFromRecurrenceRule(recurrenceRule) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const date = selectSelectedDate(getState())
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${recurrenceRule['@id']}/between`,
+      data: {
+        after: moment(date).startOf('day'),
+        before: moment(date).endOf('day'),
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        console.log(response.data)
+        // dispatch(createTaskSuccess())
+        // dispatch(updateTask(response.data))
+        // dispatch(closeNewTaskModal())
+      })
+      .catch(error => console.log(error))
+  }
+}
+
 export {
   assignAfter,
   updateTask,
@@ -845,4 +926,8 @@ export {
   scanPositions,
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
+  closeRecurrenceRuleModal,
+  setCurrentRecurrenceRule,
+  saveRecurrenceRule,
+  createTasksFromRecurrenceRule,
 }

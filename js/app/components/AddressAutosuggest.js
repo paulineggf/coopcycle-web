@@ -593,7 +593,8 @@ class AddressAutosuggest extends Component {
         highlightFirstSuggestion={ highlightFirstSuggestion }
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
-        inputProps={ inputProps } />
+        inputProps={ inputProps }
+        containerProps={ this.props.containerProps } />
     )
   }
 }
@@ -609,6 +610,7 @@ AddressAutosuggest.defaultProps = {
   disabled: false,
   inputName: undefined,
   inputId: undefined,
+  containerProps: {},
 }
 
 AddressAutosuggest.propTypes = {
@@ -626,6 +628,7 @@ AddressAutosuggest.propTypes = {
   disabled: PropTypes.bool,
   inputName: PropTypes.string,
   inputId: PropTypes.string,
+  containerProps: PropTypes.object,
 }
 
 export default withTranslation()(AddressAutosuggest)

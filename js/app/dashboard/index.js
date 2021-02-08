@@ -51,6 +51,7 @@ function start() {
     centrifugoEventsChannel: dashboardEl.dataset.centrifugoEventsChannel,
     nav: dashboardEl.dataset.nav,
     positions,
+    rrules: JSON.parse(dashboardEl.dataset.rrules),
   }
 
   const key = date.format('YYYY-MM-DD')

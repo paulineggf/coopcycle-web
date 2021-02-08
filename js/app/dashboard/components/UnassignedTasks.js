@@ -5,12 +5,14 @@ import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { rrulestr } from 'rrule'
+import moment from 'moment'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks } from '../redux/selectors'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule } from '../redux/actions'
+import { selectGroups, selectStandaloneTasks, selectRecurringTasks, selectRecurringRules } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
 
@@ -127,6 +129,25 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
+          { this.props.recurrenceRules.map((rrule, index) => {
+
+            const ruleObj = rrulestr(rrule.rule, {
+              dtstart: moment.utc(rrule.startDate).toDate(),
+            })
+
+            const length = rrule.template['@type'] === 'hydra:Collection' ? rrule.template['hydra:member'].length : 1
+
+            return (
+              <span className="list-group-item text-info" key={ `rrule-${index}` } onClick={ () => this.props.setCurrentRecurrenceRule(rrule) }>
+                <i className="fa fa-clock-o mr-2"></i>
+                <span>
+                  <span className="font-weight-bold">{ rrule.orgName }</span>
+                  <span className="mx-1">›</span>
+                </span>
+                <span>{ `${ruleObj.toText()} - ${moment.utc(rrule.startDate).format('HH:mm')}/${moment.utc(rrule.endDate).format('HH:mm')} (${length})` }</span>
+              </span>
+            )
+          }) }
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
@@ -166,6 +187,10 @@ function mapStateToProps (state) {
   }
 }
 
-const mapDispatchToProps = () => ({})
+function mapDispatchToProps(dispatch) {
+  return {
+    setCurrentRecurrenceRule: (recurrenceRule) => dispatch(setCurrentRecurrenceRule(recurrenceRule)),
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTasks))

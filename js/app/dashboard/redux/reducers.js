@@ -41,6 +41,9 @@ import {
   CLEAR_SELECTED_TASKS,
   SCAN_POSITIONS,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
+  OPEN_RECURRENCE_RULE_MODAL,
+  CLOSE_RECURRENCE_RULE_MODAL,
+  SET_CURRENT_RECURRENCE_RULE,
 } from './actions'
 
 import { isOffline } from './utils'
@@ -86,6 +89,50 @@ const initialState = {
   uploaderEndpoint: '',
   exampleSpreadsheetUrl: '#',
   clustersEnabled: false,
+  recurrenceRuleModalIsOpen: false,
+  currentRecurrenceRule: null,
+  rrules: [],
+  /*
+  rrules: [{
+    rule: 'FREQ=WEEKLY',
+    startDate: '2021-02-08T19:00:00',
+    endDate: '2021-02-08T19:30:00',
+    orgName: 'Acme',
+    template: {
+      '@type':'Task',
+      type: 'DROPOFF',
+      address: {
+        streetAddress: '4, Rue de Rivoli, 75001 Paris'
+      }
+    }
+  }, {
+    rule: 'FREQ=WEEKLY;BYDAY=MO,FR',
+    startDate: '2021-02-08T15:00:00',
+    endDate: '2021-02-08T15:30:00',
+    orgName: 'Acme',
+    template: {
+      '@type':'hydra:Collection',
+      'hydra:member':[
+        {
+          type: 'DROPOFF',
+          address: {
+            streetAddress: '89, Rue de la Paix, 75001 Paris'
+          },
+          after: '10:00',
+          before: '10:30'
+        },
+        {
+          type: 'DROPOFF',
+          address: {
+            streetAddress: '122, Rue de la Paix, 75001 Paris'
+          },
+          after: '10:30',
+          before: '11:00'
+        }
+      ]
+    }
+  }],
+  */
 }
 
 const addModalIsOpen = (state = false, action) => {
@@ -464,6 +511,36 @@ const centrifugoToken = (state = initialState.centrifugoToken) => state
 const centrifugoTrackingChannel = (state = initialState.centrifugoTrackingChannel) => state
 const centrifugoEventsChannel = (state = initialState.centrifugoEventsChannel) => state
 
+const recurrenceRuleModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_RECURRENCE_RULE_MODAL:
+    return true
+  case CLOSE_RECURRENCE_RULE_MODAL:
+    return false
+  case SET_CURRENT_RECURRENCE_RULE:
+
+    if (!!action.recurrenceRule) {
+      return true
+    }
+
+    return false
+  }
+
+  return state
+}
+
+const currentRecurrenceRule = (state = null, action) => {
+  switch(action.type) {
+  case SET_CURRENT_RECURRENCE_RULE:
+
+    return action.recurrenceRule
+  }
+
+  return state
+}
+
+const rrules = (state = initialState.rrules) => state
+
 export default (state = initialState, action) => {
 
   const { filters, isDefaultFilters } = combinedFilters(state, action)
@@ -496,5 +573,8 @@ export default (state = initialState, action) => {
     imports: imports(state.imports, action),
     importModalIsOpen: importModalIsOpen(state.importModalIsOpen, action),
     clustersEnabled: clustersEnabled(state.clustersEnabled, action),
+    recurrenceRuleModalIsOpen: recurrenceRuleModalIsOpen(state.recurrenceRuleModalIsOpen, action),
+    currentRecurrenceRule: currentRecurrenceRule(state.currentRecurrenceRule, action),
+    rrules: rrules(state.rrules, action),
   }
 }

@@ -11,6 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
@@ -176,6 +177,17 @@ trait AdminDashboardTrait
 
         $positions = $this->loadPositions($tile38);
 
+        $recurrenceRules =
+            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
+
+        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
+            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
+                'resource_class' => TaskRecurrenceRule::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+            ]);
+        }, $recurrenceRules);
+
         return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
@@ -190,6 +202,7 @@ trait AdminDashboardTrait
             'centrifugo_tracking_channel' => sprintf('$%s_tracking', $this->getParameter('centrifugo_namespace')),
             'centrifugo_events_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
             'positions' => $positions,
+            'task_recurrence_rules' => $recurrenceRulesNormalized,
         ]);
     }
 

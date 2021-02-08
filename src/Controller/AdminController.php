@@ -28,6 +28,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Zone;
@@ -79,6 +80,7 @@ use FOS\UserBundle\Util\TokenGeneratorInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
+use Recurr\Rule as RRule;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
@@ -2014,5 +2016,70 @@ class AdminController extends Controller
         return $this->render('admin/hub.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/settings/recurrence", name="admin_settings_recurrence")
+     */
+    public function recurrenceSettingsAction(Request $request)
+    {
+        $recurrences = $this->getDoctrine()->getRepository(RecurrenceRule::class)->findAll();
+
+        echo '<pre>';
+        $transformer = new \Recurr\Transformer\ArrayTransformer();
+        $textTransformer = new \Recurr\Transformer\TextTransformer();
+        $constraint = new \Recurr\Transformer\Constraint\BetweenConstraint(
+            new \DateTime(),
+            new \DateTime('+3 months')
+        );
+
+        foreach ($recurrences as $recurrence) {
+
+            $rule = $recurrence->getRule();
+            $rule->setStartDate($recurrence->getStartDate());
+            $rule->setEndDate($recurrence->getEndDate());
+
+            var_dump($textTransformer->transform($rule));
+
+            foreach ($transformer->transform($recurrence->getRule(), $constraint) as $r) {
+                var_dump($r->getStart()->format(\DateTime::ATOM). ' -> '.$r->getEnd()->format(\DateTime::ATOM));
+            }
+        }
+
+        // var_dump(count($rules));
+        exit;
+
+        /*
+        $timezone    = 'Europe/Paris';
+        $startDate   = new \DateTime('2021-02-01 14:00:00', new \DateTimeZone($timezone));
+        $endDate     = new \DateTime('2021-02-01 14:30:00', new \DateTimeZone($timezone)); // Optional
+
+        $dtStart = $startDate->format('Ymd\THis');
+        $dtEnd = $endDate->format('Ymd\THis');
+
+        echo '<pre>';
+
+        // $rule        = new RRule('FREQ=WEEKLY;COUNT=5', $startDate, $endDate, $timezone);
+        $ruleText = sprintf('DTSTART=%s;DTEND=%s;FREQ=WEEKLY;', $dtStart, $dtEnd);
+        var_dump($ruleText);
+        $rule        = new RRule($ruleText);
+
+
+
+
+        $textTransformer = new \Recurr\Transformer\TextTransformer();
+        var_dump($textTransformer->transform($rule));
+
+        // $constraint = new \Recurr\Transformer\Constraint\BeforeConstraint(new \DateTime('2021-03-01 00:00:00'));
+        $constraint = new \Recurr\Transformer\Constraint\BetweenConstraint(
+            new \DateTime(),
+            new \DateTime('+3 months')
+        );
+
+        foreach ($transformer->transform($rule, $constraint) as $recurrence) {
+            var_dump($recurrence->getStart()->format(\DateTime::ATOM). ' -> '.$recurrence->getEnd()->format(\DateTime::ATOM));
+        }
+        exit;
+        */
     }
 }
